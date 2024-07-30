@@ -7,7 +7,7 @@ The task send in `pdf` format can seen `/task_planning/BimeBazar-Backend-Task.pd
 | Step | Description |
 | ---- | ----------- |
 | Initialize the git repository |  |
-| Initialize a bare django apps | |
+| Initialize a bare django project | |
 | Add a dockerfile at first (change the dockerfile after each next step if required) | |
 | Design DB schema (django models) | Schema defined in this project should be Based on the requirements in BimeBazar Task file |
 | Add django admin for the modls | |
