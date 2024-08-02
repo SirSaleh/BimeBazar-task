@@ -14,3 +14,6 @@ class Book(models.Model):
     class Meta:
         verbose_name="Book"
         verbose_name_plural="Books"
+
+    def __str__(self):
+        return f"{self.title} by {self.author} ({self.published_date.year})"
