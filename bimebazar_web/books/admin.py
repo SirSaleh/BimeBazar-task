@@ -3,7 +3,7 @@ from .models import Book
 
 
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('id', 'description', 'author', 'genre')
+    list_display = ('id', 'author', 'genre')
     list_filter = ('author', 'genre')
 
 
