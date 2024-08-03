@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+from django.db.models import Q
 
 class BookReview(models.Model):
     book = models.ForeignKey('books.Book', on_delete=models.CASCADE, related_name='book_reviews')
@@ -13,6 +14,12 @@ class BookReview(models.Model):
         verbose_name = "Book Review"
         verbose_name_plural = "Book Reviews"
         unique_together = ('book', 'user')
+        constraints = [
+            models.CheckConstraint(
+                check=Q(rating__gte=1) & Q(rating__lte=5),
+                name='rating_range'
+            ),
+        ]
 
     def __str__(self):
         return f"Review by {self.user} on {self.book}"
