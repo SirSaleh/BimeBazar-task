@@ -1,3 +1,4 @@
 django==4.2.1
 djangorestframework==3.15.1
 drf-nested-routers==0.94.1
+djangorestframework-simplejwt==5.3.1
