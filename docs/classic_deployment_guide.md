@@ -49,3 +49,5 @@ python3 bimebazar_web/manage.py runserver
 
 remember you can access the django app on port `8000` on local machine on [http://127.0.0.1:8000](http://127.0.0.1:8000). Also if you load the fixture data there is an admin user with this credentionals: username: `test`, password: `123`.
 
+**Note**: This is a bad practice for real project. I just created this for interview task tests.
+
