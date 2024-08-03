@@ -1,5 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
+
+from books.models import Book
+from bookmarks.models import Bookmark
+
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -73,4 +78,62 @@ class AuthTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
+class BookViewSetTestCase(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='sali', password='abcdef')
+        
+        self.token = RefreshToken.for_user(self.user).access_token
+        self.books = [
+            Book.objects.create(title='Book 1', description='Description 1', author='Author 1', genre='Genre 1'),
+            Book.objects.create(title='Book 2', description='Description 2', author='Author 2', genre='Genre 2'),
+        ]
 
+        self.bookmark = Bookmark.objects.create(book=self.books[0], user=self.user)
+
+        self.books[0].bookmarks.add(self.bookmark)
+        self.url = '/api/books/'
+
+    def test_list_books_authenticated(self):
+        """Test listing books when authenticated with JWT token."""
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + str(self.token))
+        response = self.client.get(self.url)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), len(self.books))
+
+        for book in response.data['results']:
+            if book['id'] == self.books[0].id:
+                self.assertTrue(book['is_bookmarked'])
+            else:
+                self.assertFalse(book['is_bookmarked'])
+
+    def test_list_books_unauthenticated(self):
+        """Test listing books when not authenticated."""
+        response = self.client.get(self.url)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), len(self.books))
+
+        for book in response.data['results']:
+            self.assertFalse(book['is_bookmarked'])
+
+    def test_list_books_with_pagination(self):
+        """Test pagination in the book list."""
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + str(self.token))
+        response = self.client.get(self.url + '?page=1&page_size=1')
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data['results']), 1) 
+
+    def test_list_books_with_invalid_token(self):
+        """Test listing books with an invalid JWT token."""
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer invalidtoken')
+        response = self.client.get(self.url)
+        
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_list_books_no_auth(self):
+        """Test listing books without providing an authorization header."""
+        response = self.client.get(self.url)
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
