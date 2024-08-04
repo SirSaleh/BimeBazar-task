@@ -3,6 +3,7 @@ from django.urls import reverse
 
 from books.models import Book
 from bookmarks.models import Bookmark
+from reviews.models import BookReview
 
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status
@@ -78,7 +79,7 @@ class AuthTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
-class BookViewSetTestCase(APITestCase):
+class BookListAPITestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='sali', password='abcdef')
         
@@ -91,7 +92,7 @@ class BookViewSetTestCase(APITestCase):
         self.bookmark = Bookmark.objects.create(book=self.books[0], user=self.user)
 
         self.books[0].bookmarks.add(self.bookmark)
-        self.url = '/api/books/'
+        self.url = reverse('api:book-list')
 
     def test_list_books_authenticated(self):
         """Test listing books when authenticated with JWT token."""
@@ -137,3 +138,58 @@ class BookViewSetTestCase(APITestCase):
         response = self.client.get(self.url)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class BookDetailAPITestCase(APITestCase):
+    def setUp(self):
+        self.users = [
+            User.objects.create_user(username='testuser1', password='testpassword1'),
+            User.objects.create_user(username='testuser2', password='testpassword2'),
+            User.objects.create_user(username='testuser3', password='testpassword3'),
+            User.objects.create_user(username='testuser4', password='testpassword4'),
+            User.objects.create_user(username='testuser5', password='testpassword5'),
+            User.objects.create_user(username='testuser6', password='testpassword6'),
+        ]
+        self.book = Book.objects.create(
+            title='Test Book',
+            description='A book for testing purposes.',
+            author='Test Author',
+            genre='Fiction',
+            published_date='2023-01-01'
+        )
+
+        ratings = [5, 2, None, 3, 1, 1]
+        reviews = ["khoobe", "not bad", "good", None, None, None]
+        for i in range(6):
+            BookReview.objects.create(
+                book=self.book,
+                user=self.users[i],
+                rating=ratings[i],
+                review_text=reviews[i]
+            )
+
+        test_bookmark = Bookmark.objects.create(book=self.book, user=self.users[1])
+        self.book.bookmarks.add(test_bookmark)
+
+    def test_book_detail(self):
+        self.client.force_authenticate(user=self.users[0])
+        response = self.client.get(reverse('api:book-detail', kwargs={"pk": self.book.id}))
+        
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()
+
+        self.assertEqual(data['id'], self.book.id)
+        self.assertEqual(data['title'], 'Test Book')
+        self.assertEqual(data['description'], 'A book for testing purposes.')
+        self.assertEqual(data['number_of_reviews'], 3)
+        self.assertEqual(data['number_of_ratings'], 5)
+        self.assertEqual(data['average_rating'], 2.4)
+        self.assertDictEqual(data['ratings_distribution'], {'1': 2, '2': 1, '3': 1, '4': 0, '5': 1})
+        
+        self.assertEqual(len(data['reviews']), 3)
+        for review in data['reviews']:
+            self.assertIn('user', review)
+            self.assertIn('rating', review)
+            self.assertIn('review_text', review)
+            self.assertIn('created_at', review)
