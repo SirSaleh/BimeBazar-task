@@ -1,7 +1,7 @@
 #!/bin/sh
 
-cd bimebazar_web
+cd /code/bimebazar_web
 python manage.py migrate
-cd ..
+cd /code
 
 exec "$@"

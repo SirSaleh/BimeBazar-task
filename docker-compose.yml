@@ -2,25 +2,12 @@ services:
   web:
     build:
       context: .
-      dockerfile: bimebazar_web/dockerfile
-    command: gunicorn --bind 0.0.0.0:8000 bimebazar_web.wsgi:application
+      dockerfile: bimebazar_web/Dockerfile
     volumes:
       - .:/code
     environment:
       - DJANGO_SETTINGS_MODULE=bimebazar_web.settings
       - PYTHONPATH=/code/bimebazar_web
-    expose:
-      - 8000
-
-  nginx:
-    build:
-      context: .
-      dockerfile: nginx/dockerfile
     ports:
-      - "80:80"
-    volumes:
-      - ./nginx/nginx.conf.template:/etc/nginx/conf.d/default.conf.template
-    environment:
-      - SERVER_NAME=${SERVER_NAME:-127.0.0.1}
-    depends_on:
-      - web
+      - "8000:8000"
+    command: python bimebazar_web/manage.py runserver 0.0.0.0:8000

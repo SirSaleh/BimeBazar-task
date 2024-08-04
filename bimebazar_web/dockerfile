@@ -1,40 +1,29 @@
-FROM python:3.9-alpine
+FROM python:3.9
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /code
 
-RUN apk update && apk add --no-cache \
-    gcc \
-    libc-dev \
+RUN apt-get update && apt-get install -y \
     libffi-dev \
-    make \
-    musl-dev \
-    postgresql-dev \
-    linux-headers \
-    jpeg-dev \
-    zlib-dev \
-    && pip install gunicorn
-
-RUN apk add --no-cache postgresql-libs
-
-RUN pip install --upgrade pip
+    libjpeg-dev \
+    zlib1g-dev \
+    && pip install --upgrade pip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /code/
-
 RUN pip install -r requirements.txt
 
 COPY . /code/
+
 
 COPY bimebazar_web/docker-web-entrypoint.sh /docker-web-entrypoint.sh
 RUN chmod +x /docker-web-entrypoint.sh
 
 ENTRYPOINT ["/docker-web-entrypoint.sh"]
 
-RUN adduser -D myuser
-USER myuser
-
 EXPOSE 8000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "bimebazar_web.wsgi:application"]
+CMD ["python", "bimebazar_web/manage.py", "runserver", "0.0.0.0:8000"]
