@@ -1,5 +1,4 @@
-from django.contrib.auth.models import User
-
+from django.contrib.auth import get_user_model
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
@@ -9,6 +8,7 @@ from drf_yasg import openapi
 
 from ..serializers.auth_serializers import RegisterUserSerializer
 
+User = get_user_model()
 
 class UserAPIView(APIView):
     serializer_class = RegisterUserSerializer

@@ -1,7 +1,9 @@
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils import timezone
 from django.db.models import Q
+
+User = get_user_model()
 
 class BookReview(models.Model):
     book = models.ForeignKey('books.Book', on_delete=models.CASCADE, related_name='book_reviews')

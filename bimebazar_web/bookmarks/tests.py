@@ -1,8 +1,10 @@
 from django.test import TestCase
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.utils import timezone
 from books.models import Book
 from .models import Bookmark
+
+User = get_user_model()
 
 class BookmarkModelTest(TestCase):
 

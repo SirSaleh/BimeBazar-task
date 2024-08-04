@@ -1,10 +1,13 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from books.models import Book
 from bookmarks.models import Bookmark
 from reviews.models import BookReview
+
+User = get_user_model()
+
 
 class BookmarkTests(APITestCase):
     
