@@ -11,12 +11,11 @@ class BookmarkViewSet(mixins.ListModelMixin,
                       mixins.CreateModelMixin,
                       mixins.DestroyModelMixin,
                       viewsets.GenericViewSet):
-    queryset = Bookmark.objects.all()
     serializer_class = BookmarkCreateSerializer
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_description="List all bookmarks",
+        operation_description="List all bookmarks for the authenticated user",
         responses={200: openapi.Response('Successful Response', BookmarkCreateSerializer(many=True))}
     )
     def list(self, request, *args, **kwargs):
@@ -33,6 +32,11 @@ class BookmarkViewSet(mixins.ListModelMixin,
             400: 'Invalid input data'
         }
     )
+
+    def get_queryset(self):
+        qs = Bookmark.objects.filter(user=self.request.user).order_by('-id')
+        return qs
+
     def create(self, request, *args, **kwargs):
         """
         Create a new bookmark.
