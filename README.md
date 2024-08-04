@@ -13,3 +13,5 @@ _Alternatively, You can use the [classic deployment](./docs/classic_deployment_g
 ## API Docs
 
 After deployment swagger api docs will be available on `/swagger` path.
+
+Admin panel also will be available on the `/admin` path. [127.0.0.1/admin](127.0.0.1/admin) for a local machine.
