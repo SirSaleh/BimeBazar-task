@@ -15,7 +15,7 @@ sudo docker compose up -d --build
 
 **Note**: First build will may take several minutes based on the internet speed.
 
-After completing the process service must be up at port 80 in the local machine. ([127.0.0.1](http://127.0.0.1))
+After completing the process service must be up at port 8000 in the local machine. ([127.0.0.1:8000](http://127.0.0.1:8000))
 
 
 ## Loading the Data Fixture
