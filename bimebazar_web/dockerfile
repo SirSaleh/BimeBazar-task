@@ -27,6 +27,11 @@ RUN pip install -r requirements.txt
 
 COPY . /code/
 
+COPY bimebazar_web/docker-web-entrypoint.sh /docker-web-entrypoint.sh
+RUN chmod +x /docker-web-entrypoint.sh
+
+ENTRYPOINT ["/docker-web-entrypoint.sh"]
+
 RUN adduser -D myuser
 USER myuser
 
