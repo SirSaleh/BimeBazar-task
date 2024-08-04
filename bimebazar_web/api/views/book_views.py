@@ -1,7 +1,7 @@
 from django.db.models import Count
 
 from books.models import Book
-from ..serializers import BookDetailSerializer, BookListSerializer
+from ..serializers.book_serializers import BookDetailSerializer, BookListSerializer
 from ..permissions import BookPermission
 from ..paginations import BookPagination
 

@@ -4,7 +4,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
 from bookmarks.models import Bookmark
-from ..serializers import BookmarkCreateSerializer
+from ..serializers.bookmark_serializers import BookmarkCreateSerializer
 
 
 class BookmarkViewSet(mixins.ListModelMixin,
