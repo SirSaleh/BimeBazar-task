@@ -102,6 +102,8 @@ class BookListAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data['results']), len(self.books))
 
+        self.assertTrue('detail_path' in response.data['results'][0])
+
         for book in response.data['results']:
             if book['id'] == self.books[0].id:
                 self.assertTrue(book['is_bookmarked'])
@@ -117,6 +119,8 @@ class BookListAPITestCase(APITestCase):
 
         for book in response.data['results']:
             self.assertFalse(book['is_bookmarked'])
+        
+        self.assertTrue('detail_path' in response.data['results'][0])
 
     def test_list_books_with_pagination(self):
         """Test pagination in the book list."""
@@ -138,6 +142,7 @@ class BookListAPITestCase(APITestCase):
         response = self.client.get(self.url)
         
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue('detail_path' in response.data['results'][0])
 
 
 class BookDetailAPITestCase(APITestCase):

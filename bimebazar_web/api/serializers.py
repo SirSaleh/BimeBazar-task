@@ -1,4 +1,5 @@
 from django.db.models import Count, Avg
+from django.urls import reverse
 from rest_framework import serializers
 
 from books.models import Book
@@ -61,13 +62,11 @@ class BookDetailSerializer(serializers.ModelSerializer):
 class BookListSerializer(serializers.ModelSerializer):
     bookmarks_count = serializers.SerializerMethodField()
     is_bookmarked = serializers.SerializerMethodField()
-
-    # todo: add detail url after implementing it
-    # detail_url = serializers.HyperlinkedIdentityField(view_name='book-detail', format='html')
+    detail_path = serializers.SerializerMethodField()
 
     class Meta:
         model = Book
-        fields = ['id', 'title', 'bookmarks_count', 'is_bookmarked']
+        fields = ['id', 'title', 'bookmarks_count', 'is_bookmarked', 'detail_path']
 
     def get_bookmarks_count(self, obj):
         return obj.bookmarks.count()
@@ -77,3 +76,6 @@ class BookListSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return Bookmark.objects.filter(book=obj, user=request.user).exists()
         return False
+    
+    def get_detail_path(self, obj):
+        return reverse('api:book-detail', kwargs={'pk': obj.id})
