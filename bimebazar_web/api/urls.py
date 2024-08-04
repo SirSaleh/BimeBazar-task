@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from .views.auth_views import UserAPIView
-from .routers import router
+from .routers import router, book_router
 
 urlpatterns = [
     path('users/', UserAPIView.as_view(), name="users_api_view"),
@@ -13,3 +13,4 @@ urlpatterns = [
 ]
 
 urlpatterns += router.urls
+urlpatterns += book_router.urls
