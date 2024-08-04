@@ -186,7 +186,7 @@ class BookDetailAPITestCase(APITestCase):
 
         self.assertEqual(data['id'], self.book.id)
         self.assertEqual(data['title'], 'Test Book')
-        self.assertEqual(data['description'], 'A book for testing purposes.')
+        self.assertEqual(data['book_summary'], 'A book for testing purposes.')
         self.assertEqual(data['number_of_reviews'], 3)
         self.assertEqual(data['number_of_ratings'], 5)
         self.assertEqual(data['average_rating'], 2.4)

@@ -19,10 +19,11 @@ class BookDetailSerializer(serializers.ModelSerializer):
     average_rating = serializers.SerializerMethodField()
     ratings_distribution = serializers.SerializerMethodField()
     reviews = serializers.SerializerMethodField()
+    book_summary = serializers.SerializerMethodField()
     
     class Meta:
         model = Book
-        fields = ['id', 'title', 'description', 
+        fields = ['id', 'title', 'book_summary', 
                   'number_of_reviews', 'number_of_ratings', 
                   'average_rating', 'ratings_distribution',
                   'reviews']
@@ -48,6 +49,14 @@ class BookDetailSerializer(serializers.ModelSerializer):
                 distribution[rating] = count
 
         return distribution
+
+    def get_book_summary(self, obj):
+        book_summary = obj.description[0:250]
+        summary_postfix = ""
+        if len(obj.description) > 250:
+            summary_postfix = "..."
+
+        return book_summary + summary_postfix
 
     def get_reviews(self, obj):
         reviews = obj.book_reviews.exclude(review_text__isnull=True)
